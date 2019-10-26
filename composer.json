@@ -1,0 +1,17 @@
+{
+  "name": "drupal/language_suggestion",
+  "description": "Built for multilingual websites with a friendly suggestion box about other versions of the site with browser based langauge detection.",
+  "type": "drupal-module",
+  "homepage": "https://drupal.org/project/language_suggestion",
+  "authors": [
+    {
+      "name": "Minnur Yunusov (minnur)",
+      "homepage": "https://www.drupal.org/u/minnur",
+      "role": "Maintainer"
+    }
+  ],
+  "support": {
+    "issues": "https://drupal.org/project/issues/language_suggestion",
+    "source": "http://cgit.drupalcode.org/language_suggestion"
+  }
+}

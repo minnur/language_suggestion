@@ -1,5 +1,5 @@
 name: Language Suggestion
 type: module
-description: Detects browser language, checks currently enabled translations and suggests to switch to the language.
+description: Built for multilingual websites with a friendly suggestion box about other versions of the site with browser based langauge detection.
 core: 8.x
 package: Multilingual
