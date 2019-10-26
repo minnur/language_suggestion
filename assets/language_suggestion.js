@@ -6,7 +6,7 @@
     var current_lang = drupalSettings.language_suggestion.current_language.toLowerCase();
     var pathLangCode = drupalSettings.path.currentLanguage;
     var settings = drupalSettings.language_suggestion.settings;
-    var browser_lang = 'de';//window.navigator.userLanguage || window.navigator.language; // Set to 'de' for debugging.
+    var browser_lang = window.navigator.userLanguage || window.navigator.language; // Set to 'de' for debugging.
     var layoutContainer = $((settings.container_class !== undefined || settings.container_class !== '') ? settings.container_class : 'body');
     var show_suggestion = false;
     var lang_code = null;
