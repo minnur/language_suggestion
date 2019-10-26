@@ -4,6 +4,10 @@ Drupal 8 module built for multilingual websites with a friendly suggestion box a
 
 ![Language Suggestion Drupal 8 module](https://github.com/minnur/language_suggestion/blob/master/assets/screenshot.png)
 
+Suggestion box that appears for visitors
+
+![Language Suggestion box Drupal 8 module](https://github.com/minnur/language_suggestion/blob/master/assets/suggestion-box.png)
+
 ### Use case
 
 Sometimes when implementing multilingual sites there might be a case when rather than redirecting to a version of the site that you assume visitor is from you might want suggest and ask them if they would like to continue to a language that we think he understands.
