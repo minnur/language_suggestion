@@ -1,0 +1,6 @@
+enabled: 1
+message: null
+always_redirect: 1
+cookie_dismiss_time: '168'
+show_delay: '1'
+disable_redirect_class: a.language-link

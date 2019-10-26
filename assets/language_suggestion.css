@@ -1,0 +1,28 @@
+#language-suggestion {
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  display: none;
+}
+
+.ls-wrapper {
+  background-color: #fff;
+  border: 1px solid #c3c3c3;
+  padding: 15px;
+  -webkit-box-shadow: 6px 8px 9px -10px black;
+     -moz-box-shadow: 6px 8px 9px -10px black;
+          box-shadow: 6px 8px 9px -10px black;
+}
+
+.ls-wrapper .ls-message,
+.ls-wrapper a {
+  font-size: 14px;
+}
+
+.ls-goto {
+  float: right;
+}
+
+.ls-dismiss {
+  float: left;
+}

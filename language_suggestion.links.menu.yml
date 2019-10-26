@@ -1,0 +1,6 @@
+language_suggestion.settings:
+  title: 'Language Suggestion'
+  route_name: language_suggestion.settings
+  description: 'Configure language suggestion.'
+  parent: system.admin_config_regional
+  weight: 99

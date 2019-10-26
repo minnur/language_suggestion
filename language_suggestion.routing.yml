@@ -1,0 +1,9 @@
+language_suggestion.settings:
+  path: '/admin/config/regional/language-suggestion'
+  defaults:
+    _form: '\Drupal\language_suggestion\Form\LanguageSuggestionSettingsForm'
+    _title: 'Language Suggestion'
+  requirements:
+    _permission: 'access administration pages'
+  options:
+    _admin_route: TRUE

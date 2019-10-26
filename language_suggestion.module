@@ -1,0 +1,23 @@
+<?php
+
+/**
+ * Implements hook_page_attachments_alter().
+ */
+function language_suggestion_page_attachments_alter(array &$attachments) {
+  if (!\Drupal::service('router.admin_context')->isAdminRoute()) {
+    $config = \Drupal::config('language_suggestion.settings');
+    $attachments['#attached']['drupalSettings']['language_suggestion'] = [
+      'current_language' => \Drupal::languageManager()->getCurrentLanguage()->getId(),
+      'settings' => [
+        'enabled' => (bool) $config->get('enabled'),
+        'container_class' => $config->get('container_class'),
+        'always_redirect' => (bool) $config->get('always_redirect'),
+        'disable_redirect_class' => $config->get('disable_redirect_class'),
+        'cookie_dismiss_time' => $config->get('cookie_dismiss_time'),
+        'show_delay' => $config->get('show_delay'),
+        'mapping' => $config->get('mapping'),
+      ],
+    ];
+    $attachments['#attached']['library'][] = 'language_suggestion/language_suggestion';
+  }
+}

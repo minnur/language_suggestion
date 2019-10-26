@@ -1,0 +1,11 @@
+language_suggestion:
+  version: VERSION
+  js:
+    assets/language_suggestion.js: {}
+  css:
+    theme:
+      assets/language_suggestion.css: {}
+  dependencies:
+    - core/jquery
+    - core/drupalSettings
+    - core/jquery.cookie
