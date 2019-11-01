@@ -1,6 +1,9 @@
 enabled: 1
-message: null
 always_redirect: 1
 cookie_dismiss_time: '168'
-show_delay: '1'
+show_delay: '3'
 disable_redirect_class: a.language-link
+container_class: .layout-container
+language_detection: browser
+http_header_parameter: User-Agent
+cookie_prefix: language_suggestion

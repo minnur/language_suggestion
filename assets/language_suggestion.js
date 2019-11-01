@@ -34,10 +34,11 @@
       var message = null;
       var url = null;
       var custom_url = null;
+      var default_url = null;
       
-      var dismissed = $.cookie('language_suggestion.dismiss');
-      var redrectLang = $.cookie('language_suggestion.always_redirect');
-      var redrectLangCode = $.cookie('language_suggestion.redirect_lang');
+      var dismissed = $.cookie(settings.cookie_prefix + '.dismiss');
+      var redrectLang = $.cookie(settings.cookie_prefix + '.always_redirect');
+      var redrectLangCode = $.cookie(settings.cookie_prefix + '.redirect_lang');
 
       var date = new Date();
       var timestamp = date.getTime();
@@ -47,8 +48,8 @@
         // This code disables auto redirect when a visitor decides to switch languages in the UI.
         if (settings.disable_redirect_class) {
           $(settings.disable_redirect_class).on('click', function(e) {
-            $.removeCookie('language_suggestion.always_redirect');
-            $.removeCookie('language_suggestion.redirect_lang');
+            $.removeCookie(settings.cookie_prefix + '.always_redirect');
+            $.removeCookie(settings.cookie_prefix + '.redirect_lang');
           });
         }
 
@@ -72,6 +73,7 @@
                 message = langObject.message;
                 url = langObject.url;
                 custom_url = langObject.custom_url;
+                default_url = langObject.default_url;
               }
               index++; 
             }
@@ -90,10 +92,10 @@
 
       // Continue to the language suggested and make sure we add to autoredirect cookie if such option is enabled in the module settings.
       layoutContainer.find('#ls-continue').on('click', function(e) {
-        var redirect = getRedirectUrl(url, custom_url, lang_code);
+        var redirect = getRedirectUrl(url, custom_url, default_url);
         if (settings.always_redirect) {
-          $.cookie('language_suggestion.always_redirect', redirect);
-          $.cookie('language_suggestion.redirect_lang', lang_code);
+          $.cookie(settings.cookie_prefix + '.always_redirect', redirect);
+          $.cookie(settings.cookie_prefix + '.redirect_lang', lang_code);
         }
         window.location.href = redirect;
         e.disableDefault();
@@ -103,24 +105,19 @@
       layoutContainer.find('#ls-dismiss').on('click', function(e) {
         layoutContainer.find('#language-suggestion').hide('slow');
         var milliseconds = settings.cookie_dismiss_time * 60 * 60 *1000;
-        $.cookie('language_suggestion.dismiss', timestamp + milliseconds);
+        $.cookie(settings.cookie_prefix + '.dismiss', timestamp + milliseconds);
         e.disableDefault();
       });
 
     }
 
-    function getRedirectUrl(type, custom, lang_code) {
+    function getRedirectUrl(type, custom_url, default_url) {
       switch (type) {
-        case 'suffix':
-          return  window.location.origin + '/' + lang_code;
-          break;
-        case 'prefix':
-          var parsed = psl.parse(location.hostname);
-          return  window.location.protocol + '://' + lang_code + '.' + parsed.domain;
-          break;
         case 'custom':
+          return custom_url;
+          break;
         default:
-          return custom;
+          return default_url;
           break;
       }
     }

@@ -33,8 +33,19 @@ class LanguageSuggestionSettingsForm extends ConfigFormBase {
     $form['enabled'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Enable'),
-      '#description' => $this->t('Show language suggestion.'),
+      '#description' => $this->t('Show langauge suggestion.'),
       '#default_value' => $config->get('enabled'),
+    ];
+    $form['cookie_prefix'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Cookie name prefix'),
+      '#description' => $this->t('Cookie name that is prefxied to all variable that needs to be stored. Could be used to reset all the cookies for your visitors by renaming it.'),
+      '#default_value' => $config->get('cookie_prefix'),
+      '#states' => [
+        'visible' => [
+          ':input[name="enabled"]' => ['checked' => TRUE],
+        ],
+      ],
     ];
     $form['container_class'] = [
       '#type' => 'textfield',
@@ -110,7 +121,7 @@ class LanguageSuggestionSettingsForm extends ConfigFormBase {
     $form['http_header_parameter'] = [
       '#type' => 'textfield',
       '#title' => $this->t('HTTP header parameter'),
-      '#description' => $this->t('Specify HTTP header parameter that contains language code. <strong>Case sensitive parameter</strong>.'),
+      '#description' => $this->t('Specify HTTP header parameter that contains langauge code. <strong>Case sensitive parameter</strong>.'),
       '#default_value' => $config->get('http_header_parameter'),
       '#states' => [
         'visible' => [
@@ -131,6 +142,7 @@ class LanguageSuggestionSettingsForm extends ConfigFormBase {
     Cache::invalidateTags(['language_suggestion_http_header']);
     $this->config('language_suggestion.settings')
       ->set('enabled', $form_state->getValue('enabled'))
+      ->set('cookie_prefix', $form_state->getValue('cookie_prefix'))
       ->set('container_class', $form_state->getValue('container_class'))
       ->set('cookie_dismiss_time', $form_state->getValue('cookie_dismiss_time'))
       ->set('always_redirect', $form_state->getValue('always_redirect'))

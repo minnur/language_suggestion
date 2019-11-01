@@ -10,6 +10,7 @@ function language_suggestion_page_attachments_alter(array &$attachments) {
       'current_language' => \Drupal::languageManager()->getCurrentLanguage()->getId(),
       'settings' => [
         'enabled' => (bool) $config->get('enabled'),
+        'cookie_prefix' => $config->get('cookie_prefix'),
         'container_class' => $config->get('container_class'),
         'always_redirect' => (bool) $config->get('always_redirect'),
         'disable_redirect_class' => $config->get('disable_redirect_class'),

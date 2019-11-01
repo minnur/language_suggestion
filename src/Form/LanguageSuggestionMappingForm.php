@@ -8,6 +8,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Drupal\Core\Url;
 use Drupal\Core\Cache\Cache;
 
 /**
@@ -84,13 +85,15 @@ class LanguageSuggestionMappingForm extends ConfigFormBase {
         $this->t('Continue Title'),
         $this->t('Continue URL'),
         '',
-        $this->t('Language')
+        $this->t('Language'),
+        '',
       ],
       '#empty' => $this->t('Looks like the site does not have any languages enabled.'),
       '#prefix' => '<br />',
     ];
     foreach ($this->languageManager->getLanguages() as $lang) {
       $id = $lang->getId();
+      $langauge_path = Url::fromRoute('<front>', [], ['language' => $lang])->toString();
       $form['mapping'][$id]['browser_lang'] = [
         '#type' => 'textfield',
         '#title' => '',
@@ -115,11 +118,10 @@ class LanguageSuggestionMappingForm extends ConfigFormBase {
         '#type' => 'radios',
         '#title' => '',
         '#options' => [
-          'suffix' => $this->t('@domain/@code', ['@domain' => $domain, '@code' => $id]),
-          'prefix' => $this->t('@code.@domain', ['@domain' => $domain, '@code' => $id]),
+          'default' => $langauge_path,
           'custom' => $this->t('Custom'),
         ],
-        '#default_value' => ($url = $config->get('mapping.' . $id . '.url')) ? $url : 'suffix',
+        '#default_value' => ($url = $config->get('mapping.' . $id . '.url')) ? $url : 'default',
         '#size' => 25,
       ];
       $form['mapping'][$id]['custom_url'] = [
@@ -136,6 +138,10 @@ class LanguageSuggestionMappingForm extends ConfigFormBase {
       ];
       $form['mapping'][$id]['suggeseted_lang'] = [
         '#plain_text' => $lang->getName(),
+      ];
+      $form['mapping'][$id]['default_url'] = [
+        '#type' => 'hidden',
+        '#value' => $langauge_path,
       ];
     }
     return parent::buildForm($form, $form_state);
