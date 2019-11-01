@@ -4,6 +4,7 @@ namespace Drupal\language_suggestion\Form;
 
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Cache\Cache;
 
 /**
  * Class Language Suggestion settings form.
@@ -92,6 +93,34 @@ class LanguageSuggestionSettingsForm extends ConfigFormBase {
         ],
       ],
     ];
+    $form['language_detection'] = [
+      '#type' => 'radios',
+      '#title' => $this->t('Language Detection'),
+      '#description' => $this->t('Language detection method.'),
+      '#default_value' => ($language_detection = $config->get('language_detection')) ? $language_detection : 'browser',
+      '#options' => [
+        'browser' => $this->t('Browser'),
+        'http_header' => $this->t('HTTP Header')
+      ],
+      '#states' => [
+        'visible' => [
+          ':input[name="enabled"]' => ['checked' => TRUE],
+        ],
+      ],
+    ];
+    $form['http_header_parameter'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('HTTP Header parameter'),
+      '#description' => $this->t('Specify HTTP header parameter that contains langauge code. <strong>Case sensitive parameter</strong>.'),
+      '#default_value' => $config->get('http_header_parameter'),
+      '#states' => [
+        'visible' => [
+          ':input[name="enabled"]' => ['checked' => TRUE],
+          ':input[name="always_redirect"]' => ['checked' => TRUE],
+          ':input[name="language_detection"]' => ['value' => 'http_header'],
+        ],
+      ],
+    ];
     $form['container'] = [
       '#type' => 'fieldset',
       '#states' => [
@@ -146,12 +175,15 @@ class LanguageSuggestionSettingsForm extends ConfigFormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     parent::submitForm($form, $form_state);
+    Cache::invalidateTags(['language_suggestion_http_header']);
     $this->config('language_suggestion.settings')
       ->set('enabled', $form_state->getValue('enabled'))
       ->set('container_class', $form_state->getValue('container_class'))
       ->set('always_redirect', $form_state->getValue('always_redirect'))
       ->set('disable_redirect_class', $form_state->getValue('disable_redirect_class'))
       ->set('cookie_dismiss_time', $form_state->getValue('cookie_dismiss_time'))
+      ->set('language_detection', $form_state->getValue('language_detection'))
+      ->set('http_header_parameter', $form_state->getValue('http_header_parameter'))
       ->set('show_delay', $form_state->getValue('show_delay'))
       ->set('mapping', $form_state->getValue('mapping'))
       ->save();

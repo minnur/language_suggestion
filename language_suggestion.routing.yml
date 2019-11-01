@@ -7,3 +7,11 @@ language_suggestion.settings:
     _permission: 'access administration pages'
   options:
     _admin_route: TRUE
+
+language_suggestion.header_value:
+  path: '/language-suggestion/get-header-parameter'
+  defaults:
+    _controller: '\Drupal\language_suggestion\Controller\LanguageSuggestionController::getHTTPHeaderValue'
+  methods:  [GET]
+  requirements:
+    _access: 'TRUE'
