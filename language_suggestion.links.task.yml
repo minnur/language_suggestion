@@ -1,0 +1,10 @@
+language_suggestion.mapping:
+  title: 'Suggestion Mapping'
+  route_name: language_suggestion.mapping
+  base_route: language_suggestion.mapping
+
+language_suggestion.settings:
+  title: 'Settings'
+  route_name: language_suggestion.settings
+  base_route: language_suggestion.mapping
+  weight: 1

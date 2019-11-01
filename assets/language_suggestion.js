@@ -7,20 +7,22 @@
     var pathLangCode = drupalSettings.path.currentLanguage;
     var settings = drupalSettings.language_suggestion.settings;
     if (settings.language_detection == 'browser') {
-      var browser_lang = window.navigator.userLanguage || window.navigator.language; // Set to 'de' for debugging.
+      // Browser-based redirection
+      var browser_lang = 'de';//window.navigator.userLanguage || window.navigator.language; // Set to 'de' for debugging.
       languageSuggestionRoutine();
     }
     else {
+      // HTTP header-based redirection
       var browser_lang = '';
       var xhr = $.ajax({
         type: "GET",
-        url: '/language-suggestion/get-header-parameter', 
+        url: '/language-suggestion/get-header-parameter',
         success: function(output, status) { 
           browser_lang = output;
           languageSuggestionRoutine();
         },
         error: function(output) {}
-      }); 
+      });
     }
 
     function languageSuggestionRoutine() {
@@ -30,9 +32,12 @@
       var lang_code = null;
       var continue_link = null;
       var message = null;
+      var url = null;
+      var custom_url = null;
       
       var dismissed = $.cookie('language_suggestion.dismiss');
-      var redrectLangCode = $.cookie('language_suggestion.always_redirect');
+      var redrectLang = $.cookie('language_suggestion.always_redirect');
+      var redrectLangCode = $.cookie('language_suggestion.redirect_lang');
 
       var date = new Date();
       var timestamp = date.getTime();
@@ -43,13 +48,14 @@
         if (settings.disable_redirect_class) {
           $(settings.disable_redirect_class).on('click', function(e) {
             $.removeCookie('language_suggestion.always_redirect');
+            $.removeCookie('language_suggestion.redirect_lang');
           });
         }
 
         // Auto redirect to previously selected langauge.
         // Also making sure we are not creating a redirect loop when already switch to a language.
         if (settings.always_redirect && redrectLangCode !== undefined && redrectLangCode !== current_lang) {
-          window.location.href = window.location.origin + '/' + redrectLangCode;
+          window.location.href = redrectLangCode;
         }
 
         // Looping through available language mapping to find if any mapped languages matching to a visitors browser language.
@@ -64,6 +70,8 @@
                 lang_code = langcode;
                 continue_link = langObject.continue_link;
                 message = langObject.message;
+                url = langObject.url;
+                custom_url = langObject.custom_url;
               }
               index++; 
             }
@@ -82,10 +90,12 @@
 
       // Continue to the language suggested and make sure we add to autoredirect cookie if such option is enabled in the module settings.
       layoutContainer.find('#ls-continue').on('click', function(e) {
+        var redirect = getRedirectUrl(url, custom_url, lang_code);
         if (settings.always_redirect) {
-          $.cookie('language_suggestion.always_redirect', lang_code);
+          $.cookie('language_suggestion.always_redirect', redirect);
+          $.cookie('language_suggestion.redirect_lang', lang_code);
         }
-        window.location.href = window.location.origin + '/' + lang_code;
+        window.location.href = redirect;
         e.disableDefault();
       });
 
@@ -97,6 +107,22 @@
         e.disableDefault();
       });
 
+    }
+
+    function getRedirectUrl(type, custom, lang_code) {
+      switch (type) {
+        case 'suffix':
+          return  window.location.origin + '/' + lang_code;
+          break;
+        case 'prefix':
+          var parsed = psl.parse(location.hostname);
+          return  window.location.protocol + '://' + lang_code + '.' + parsed.domain;
+          break;
+        case 'custom':
+        default:
+          return custom;
+          break;
+      }
     }
 
   });

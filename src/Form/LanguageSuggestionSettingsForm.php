@@ -22,14 +22,13 @@ class LanguageSuggestionSettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function getFormId() {
-    return 'language_suggestion_config_form';
+    return 'language_suggestion_settings_form';
   }
 
   /**
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $mgr = \Drupal::languageManager();
     $config = $this->config('language_suggestion.settings');
     $form['enabled'] = [
       '#type' => 'checkbox',
@@ -42,6 +41,28 @@ class LanguageSuggestionSettingsForm extends ConfigFormBase {
       '#title' => $this->t('Container CSS element'),
       '#description' => $this->t('Main container CSS element class or ID. This is the element that will be used to add language suggestion box.'),
       '#default_value' => $config->get('container_class'),
+      '#states' => [
+        'visible' => [
+          ':input[name="enabled"]' => ['checked' => TRUE],
+        ],
+      ],
+    ];
+    $form['show_delay'] = [
+      '#type' => 'number',
+      '#title' => $this->t('Language suggestion delay'),
+      '#description' => $this->t('How many seconds to wait before showing language suggestion.'),
+      '#default_value' => $config->get('show_delay'),
+      '#states' => [
+        'visible' => [
+          ':input[name="enabled"]' => ['checked' => TRUE],
+        ],
+      ],
+    ];
+    $form['cookie_dismiss_time'] = [
+      '#type' => 'number',
+      '#title' => $this->t('Dismiss delay'),
+      '#description' => $this->t('How many hours to wait before showing language suggestion again after clicking Dismiss button.'),
+      '#default_value' => $config->get('cookie_dismiss_time'),
       '#states' => [
         'visible' => [
           ':input[name="enabled"]' => ['checked' => TRUE],
@@ -71,36 +92,14 @@ class LanguageSuggestionSettingsForm extends ConfigFormBase {
         ],
       ],
     ];
-    $form['show_delay'] = [
-      '#type' => 'number',
-      '#title' => $this->t('Language Suggestion Delay'),
-      '#description' => $this->t('How many seconds to wait before showing language suggestion.'),
-      '#default_value' => $config->get('show_delay'),
-      '#states' => [
-        'visible' => [
-          ':input[name="enabled"]' => ['checked' => TRUE],
-        ],
-      ],
-    ];
-    $form['cookie_dismiss_time'] = [
-      '#type' => 'number',
-      '#title' => $this->t('Dismiss Delay'),
-      '#description' => $this->t('How many hours to wait before showing language suggestion again after clicking Dismiss button.'),
-      '#default_value' => $config->get('cookie_dismiss_time'),
-      '#states' => [
-        'visible' => [
-          ':input[name="enabled"]' => ['checked' => TRUE],
-        ],
-      ],
-    ];
     $form['language_detection'] = [
       '#type' => 'radios',
-      '#title' => $this->t('Language Detection'),
+      '#title' => $this->t('Language detection'),
       '#description' => $this->t('Language detection method.'),
       '#default_value' => ($language_detection = $config->get('language_detection')) ? $language_detection : 'browser',
       '#options' => [
         'browser' => $this->t('Browser'),
-        'http_header' => $this->t('HTTP Header')
+        'http_header' => $this->t('HTTP header')
       ],
       '#states' => [
         'visible' => [
@@ -110,7 +109,7 @@ class LanguageSuggestionSettingsForm extends ConfigFormBase {
     ];
     $form['http_header_parameter'] = [
       '#type' => 'textfield',
-      '#title' => $this->t('HTTP Header parameter'),
+      '#title' => $this->t('HTTP header parameter'),
       '#description' => $this->t('Specify HTTP header parameter that contains langauge code. <strong>Case sensitive parameter</strong>.'),
       '#default_value' => $config->get('http_header_parameter'),
       '#states' => [
@@ -121,53 +120,7 @@ class LanguageSuggestionSettingsForm extends ConfigFormBase {
         ],
       ],
     ];
-    $form['container'] = [
-      '#type' => 'fieldset',
-      '#states' => [
-        'visible' => [
-          ':input[name="enabled"]' => ['checked' => TRUE],
-        ],
-      ],
-    ];
-    $form['container']['mapping'] = [
-      '#type' => 'table',
-      '#header' => [$this->t('Browser Language'), $this->t('Message'), $this->t('Continue Link'), $this->t('Language'), ''],
-      '#empty' => $this->t('Looks like the site does not have any languages enabled.'),
-    ];
-    foreach ($mgr->getLanguages() as $lang) {
-      $id = $lang->getId();
-      $form['container']['mapping'][$id]['browser_lang'] = [
-        '#type' => 'textfield',
-        '#title' => $this->t(''),
-        '#default_value' => $config->get('mapping.' . $id . '.browser_lang'),
-        '#description' => $this->t('Comma separated list of browser language codes'),
-        '#size' => 15,
-      ];
-      $form['container']['mapping'][$id]['message'] = [
-        '#type' => 'textarea',
-        '#title' => $this->t('Message'),
-        '#default_value' => $config->get('mapping.' . $id . '.message'),
-        '#description' => $this->t('A message to show. Write this message in the language that will be suggested'),
-      ];
-      $form['container']['mapping'][$id]['continue_link'] = [
-        '#type' => 'textfield',
-        '#title' => $this->t(''),
-        '#default_value' => $config->get('mapping.' . $id . '.continue_link'),
-        '#description' => $this->t('Continue link title'),
-        '#size' => 25,
-      ];
-      $form['container']['mapping'][$id]['suggeseted_lang'] = [
-        '#plain_text' => $lang->getName(),
-      ];
-    }
     return parent::buildForm($form, $form_state);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function validateForm(array &$form, FormStateInterface $form_state) {
-    parent::validateForm($form, $form_state);
   }
 
   /**
@@ -179,13 +132,12 @@ class LanguageSuggestionSettingsForm extends ConfigFormBase {
     $this->config('language_suggestion.settings')
       ->set('enabled', $form_state->getValue('enabled'))
       ->set('container_class', $form_state->getValue('container_class'))
+      ->set('cookie_dismiss_time', $form_state->getValue('cookie_dismiss_time'))
       ->set('always_redirect', $form_state->getValue('always_redirect'))
       ->set('disable_redirect_class', $form_state->getValue('disable_redirect_class'))
-      ->set('cookie_dismiss_time', $form_state->getValue('cookie_dismiss_time'))
       ->set('language_detection', $form_state->getValue('language_detection'))
       ->set('http_header_parameter', $form_state->getValue('http_header_parameter'))
       ->set('show_delay', $form_state->getValue('show_delay'))
-      ->set('mapping', $form_state->getValue('mapping'))
       ->save();
   }
 
