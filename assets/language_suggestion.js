@@ -8,7 +8,7 @@
     var settings = drupalSettings.language_suggestion.settings;
     if (settings.language_detection == 'browser') {
       // Browser-based redirection
-      var browser_lang = 'de';//window.navigator.userLanguage || window.navigator.language; // Set to 'de' for debugging.
+      var browser_lang = window.navigator.userLanguage || window.navigator.language; // Set to 'de' for debugging.
       languageSuggestionRoutine();
     }
     else {
