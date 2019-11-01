@@ -33,7 +33,7 @@ class LanguageSuggestionSettingsForm extends ConfigFormBase {
     $form['enabled'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Enable'),
-      '#description' => $this->t('Show langauge suggestion.'),
+      '#description' => $this->t('Show language suggestion.'),
       '#default_value' => $config->get('enabled'),
     ];
     $form['container_class'] = [
@@ -110,7 +110,7 @@ class LanguageSuggestionSettingsForm extends ConfigFormBase {
     $form['http_header_parameter'] = [
       '#type' => 'textfield',
       '#title' => $this->t('HTTP header parameter'),
-      '#description' => $this->t('Specify HTTP header parameter that contains langauge code. <strong>Case sensitive parameter</strong>.'),
+      '#description' => $this->t('Specify HTTP header parameter that contains language code. <strong>Case sensitive parameter</strong>.'),
       '#default_value' => $config->get('http_header_parameter'),
       '#states' => [
         'visible' => [
