@@ -2,7 +2,13 @@
 
 Drupal 8 module built for multilingual websites with a friendly suggestion box about other versions of the site with browser based language detection.
 
+Language suggestion mapping page:
+
 ![Language Suggestion Drupal 8 module](https://github.com/minnur/language_suggestion/blob/master/assets/screenshot.png)
+
+Settings page:
+
+![Language Suggestion Drupal 8 module](https://github.com/minnur/language_suggestion/blob/master/assets/screenshot-2.png)
 
 Suggestion box that appears for visitors
 
