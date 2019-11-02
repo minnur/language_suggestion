@@ -7,7 +7,6 @@ use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Drupal\Core\Url;
 use Drupal\Core\Cache\Cache;
 
@@ -24,26 +23,16 @@ class LanguageSuggestionMappingForm extends ConfigFormBase {
   protected $languageManager;
 
   /**
-   * The request stack.
-   *
-   * @var \Symfony\Component\HttpFoundation\RequestStack
-   */
-  protected $requestStack;
-
-  /**
    * Constructs a \Drupal\language_suggestion\Form\LanguageSuggestionMappingForm object.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The factory for configuration objects.
    * @param \Drupal\Core\Language\LanguageManagerInterface $languageManager
    *   The language manager.
-   * @param \Symfony\Component\HttpFoundation\RequestStack $request_stack
-   *   The request stack.
    */
-  public function __construct(ConfigFactoryInterface $config_factory, LanguageManagerInterface $language_manager, RequestStack $request_stack) {
+  public function __construct(ConfigFactoryInterface $config_factory, LanguageManagerInterface $language_manager) {
     parent::__construct($config_factory);
     $this->languageManager = $language_manager;
-    $this->requestStack = $request_stack;
   }
 
   /**
@@ -75,7 +64,6 @@ class LanguageSuggestionMappingForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $domain = $this->requestStack->getCurrentRequest()->getHttpHost();
     $config = $this->config('language_suggestion.settings');
     $form['mapping'] = [
       '#type' => 'table',
