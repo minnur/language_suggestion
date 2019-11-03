@@ -24,3 +24,7 @@ Configuration page is located at (`Administration`  > `Configuration` > `Regiona
 
 
 Module developed by [Minnur Yunusov](https://www.minnur.com) at [Chapter Three](https://www.chapterthree.com)
+
+### Install
+
+`composer require drupal/language_suggestion` or download from [Language Suggestion Drupal project page](https://www.drupal.org/project/language_suggestion)
