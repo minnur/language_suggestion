@@ -4,15 +4,15 @@ Drupal 8 module built for multilingual websites with a friendly suggestion box a
 
 Language suggestion mapping page:
 
-![Language Suggestion Drupal 8 module](https://github.com/minnur/language_suggestion/blob/master/assets/screenshot.png)
+![Language Suggestion Drupal 8 module](https://www.drupal.org/files/screenshot_201.png)
 
 Settings page:
 
-![Language Suggestion Drupal 8 module](https://github.com/minnur/language_suggestion/blob/master/assets/screenshot-2.png)
+![Language Suggestion Drupal 8 module](https://www.drupal.org/files/screenshot-2_12.png)
 
 Suggestion box that appears for visitors
 
-![Language Suggestion box Drupal 8 module](https://github.com/minnur/language_suggestion/blob/master/assets/suggestion-box.png)
+![Language Suggestion box Drupal 8 module](https://www.drupal.org/files/suggestion-box_0.png)
 
 ### Use case
 
