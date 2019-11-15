@@ -25,3 +25,11 @@ language_suggestion.header_value:
   methods:  [GET]
   requirements:
     _access: 'TRUE'
+
+language_suggestion.negotiation_http_header:
+  path: '/admin/config/regional/language/detection/http-header'
+  defaults:
+    _form: '\Drupal\language_suggestion\Form\NegotiationHTTPHeaderForm'
+    _title: 'HTTP header language detection configuration'
+  requirements:
+    _permission: 'administer languages'
