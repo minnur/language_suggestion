@@ -2,7 +2,6 @@
 
 namespace Drupal\language_suggestion\Plugin\LanguageNegotiation;
 
-use Drupal\Component\Utility\UserAgent;
 use Drupal\language\LanguageNegotiationMethodBase;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -29,18 +28,23 @@ class LanguageNegotiationHTTPHeader extends LanguageNegotiationMethodBase {
    */
   public function getLangcode(Request $request = NULL) {
     $langcode = NULL;
+    $config = $this->config('language_suggestion.language_negotiation');
+    $header_param = $config->get('header_param');
 
-    if ($this->languageManager && $request && $request->server->get('HTTP_ACCEPT_LANGUAGE')) {
-      $http_accept_language = $request->server->get('HTTP_ACCEPT_LANGUAGE');
-      $langcodes = array_keys($this->languageManager->getLanguages());
-      $mappings = $this->config->get('language.mappings')->get('map');
-      $langcode = UserAgent::getBestMatchingLangcode($http_accept_language, $langcodes, $mappings);
+    if ($this->languageManager && $request && !empty($header_param) && $request->server->get($header_param)) {
+      $http_header_lang = strtolower($request->server->get($header_param));
+      $mapping = $this->config->get('mapping');
+      foreach ($mapping as $item) {
+        if ($codes = explode(',', strtolower($item['http_language']))) {
+          foreach ($codes as $code) {
+            if ($http_header_lang == $code) {
+              $langcode = $item['language'];
+            }
+          }
+        }
+      }
     }
 
-    // Internal page cache with multiple languages and browser negotiation
-    // could lead to wrong cached sites. Therefore disabling the internal page
-    // cache.
-    // @todo Solve more elegantly in https://www.drupal.org/node/2430335.
     \Drupal::service('page_cache_kill_switch')->trigger();
 
     return $langcode;

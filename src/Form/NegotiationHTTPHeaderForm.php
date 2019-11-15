@@ -59,6 +59,7 @@ class NegotiationHTTPHeaderForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
+    $config = $this->config('language_suggestion.language_negotiation');
     $form = [];
 
     // Initialize a language list to the ones available, including English.
@@ -82,6 +83,13 @@ class NegotiationHTTPHeaderForm extends ConfigFormBase {
       ];
     }
 
+    $form['header_param'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('HTTP header parameter name'),
+      '#description' => $this->t('Specify HTTP header parameter that contains langauge code. <strong>Case sensitive parameter</strong>.'),
+      '#default_value' => $config->get('header_param'),
+    ];
+
     $form['mapping'] = [
       '#type' => 'table',
       '#header' => [
@@ -92,12 +100,11 @@ class NegotiationHTTPHeaderForm extends ConfigFormBase {
       '#prefix' => '<br />',
     ];
     foreach ($this->languageManager->getLanguages() as $lang) {
-      $config = $this->config('language_suggestion.language_negotiation');
       $id = $lang->getId();
       $form['mapping'][$id]['http_language'] = [
         '#type' => 'textfield',
         '#title' => '',
-        '#default_value' => $config->get('mapping.' . $id . '.browser_lang'),
+        '#default_value' => $config->get('mapping.' . $id . '.http_language'),
         '#description' => $this->t('Comma separated language/country codes'),
       ];
       $form['mapping'][$id]['language'] = [
@@ -116,13 +123,10 @@ class NegotiationHTTPHeaderForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $config = $this->config('language_suggestion.language_negotiation');
-    $mappings = $form_state->get('mappings');
-    if (!empty($mappings)) {
-      $config->setData(['map' => $mappings]);
-      $config->save();
-    }
-
+    $this->config('language_suggestion.language_negotiation')
+      ->set('header_param', $form_state->getValue('header_param'))
+      ->set('mapping', $form_state->getValue('mapping'))
+      ->save();
     parent::submitForm($form, $form_state);
   }
 
