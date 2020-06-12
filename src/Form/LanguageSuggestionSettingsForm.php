@@ -5,6 +5,7 @@ namespace Drupal\language_suggestion\Form;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Cache\Cache;
+use Drupal\file\Entity\File;
 
 /**
  * Class Language Suggestion settings form.
@@ -110,7 +111,8 @@ class LanguageSuggestionSettingsForm extends ConfigFormBase {
       '#default_value' => ($language_detection = $config->get('language_detection')) ? $language_detection : 'browser',
       '#options' => [
         'browser' => $this->t('Browser'),
-        'http_header' => $this->t('HTTP header')
+        'http_header' => $this->t('HTTP header'),
+        'geoip_db' => $this->t('GEO IP2 Country Database (https://www.maxmind.com/)'),
       ],
       '#states' => [
         'visible' => [
@@ -131,6 +133,22 @@ class LanguageSuggestionSettingsForm extends ConfigFormBase {
         ],
       ],
     ];
+    $form['geoip_db_file'] = [
+      '#type' => 'managed_file',
+      '#title' => $this->t('GeoIP Country Database File'),
+      '#upload_location' => 'public://maxmind',
+      '#upload_validators' => [
+        'file_validate_extensions' => ['mmdb'],
+      ],
+      '#default_value' => ($file_id = $config->get('geoip_db_file')) ? [$file_id] : '',
+      '#description' => $this->t('Upload .mmdb file.'),
+      '#states' => [
+        'visible' => [
+          ':input[name="enabled"]' => ['checked' => TRUE],
+          ':input[name="language_detection"]' => ['value' => 'geoip_db'],
+        ],
+      ],
+    ];
     return parent::buildForm($form, $form_state);
   }
 
@@ -139,6 +157,14 @@ class LanguageSuggestionSettingsForm extends ConfigFormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     parent::submitForm($form, $form_state);
+
+    $db_file = $form_state->getValue('geoip_db_file');
+    if (!empty($db_file[0])) {
+      $file = File::load($db_file[0]);
+      $file->setPermanent();
+      $file->save();
+    }
+
     Cache::invalidateTags(['language_suggestion_http_header']);
     $this->config('language_suggestion.settings')
       ->set('enabled', $form_state->getValue('enabled'))
@@ -150,6 +176,7 @@ class LanguageSuggestionSettingsForm extends ConfigFormBase {
       ->set('language_detection', $form_state->getValue('language_detection'))
       ->set('http_header_parameter', $form_state->getValue('http_header_parameter'))
       ->set('show_delay', $form_state->getValue('show_delay'))
+      ->set('geoip_db_file', isset($file) ? $file->id() : '')
       ->save();
   }
 

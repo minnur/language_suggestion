@@ -8,6 +8,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Cache\CacheableJsonResponse;
 use Drupal\Core\Cache\CacheableMetadata;
+use Drupal\file\Entity\File;
+use GeoIp2\Database\Reader;
+use GeoIp2\Exception\AddressNotFoundException;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class LanguageSuggestionController extends ControllerBase {
 
@@ -44,6 +48,28 @@ class LanguageSuggestionController extends ControllerBase {
     $response = new CacheableJsonResponse($langcode);
     $response->addCacheableDependency(CacheableMetadata::createFromRenderArray($data));
     return $response;
+  }
+
+  /**
+   * Get GEOIP country code from database.
+   */
+  public function getCountryCode(Request $request) {
+    $langcode = '';
+    $data = '';
+    if ($this->config_factory->get('language_detection') == 'geoip_db') {
+      $db_file_id = $this->config_factory->get('geoip_db_file');
+      if ($file = File::load($db_file_id)) {
+        try {
+          $reader = new Reader($file->getFileUri());
+          $record = $reader->country($request->getClientIp());
+          $data = !empty($record->country->isoCode) ? $record->country->isoCode : '';
+        }
+        catch (AddressNotFoundException $e) {
+
+        }
+      }
+    }
+    return new JsonResponse([ 'country' => $data]);
   }
 
 }

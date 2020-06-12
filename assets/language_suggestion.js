@@ -13,6 +13,25 @@
         var browser_lang = window.navigator.userLanguage || window.navigator.language; // Set to 'de' for debugging.
         languageSuggestionRoutine();
       }
+      else if (settings.language_detection == 'geoip_db') {
+        // Check geoip.
+        var browser_lang = '';
+        var xhr = $.ajax({
+          type: "GET",
+          url: '/language-suggestion/get-county-code?rk=' + Math.random().toString(36).slice(-5),
+          success: function(output, status) {
+            if (typeof output === 'object' && output !== null) {
+              if (output.hasOwnProperty('country')) {
+                if (output.country != '') {
+                  browser_lang = output.country.toLowerCase();
+                  languageSuggestionRoutine();
+                }
+              }
+            }
+          },
+          error: function(output) {}
+        });
+      }
       else {
         // HTTP header-based redirection
         var browser_lang = '';

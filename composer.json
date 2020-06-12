@@ -13,5 +13,8 @@
   "support": {
     "issues": "https://drupal.org/project/issues/language_suggestion",
     "source": "http://cgit.drupalcode.org/language_suggestion"
+  },
+  "require": {
+    "geoip2/geoip2": "~2.0"
   }
 }

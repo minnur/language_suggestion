@@ -18,6 +18,14 @@ language_suggestion.settings:
   options:
     _admin_route: TRUE
 
+language_suggestion.get_country_code:
+  path: '/language-suggestion/get-county-code'
+  defaults:
+    _controller: '\Drupal\language_suggestion\Controller\LanguageSuggestionController::getCountryCode'
+  methods:  [GET]
+  requirements:
+    _access: 'TRUE'
+
 language_suggestion.header_value:
   path: '/language-suggestion/get-header-parameter'
   defaults:
